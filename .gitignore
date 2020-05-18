@@ -1,0 +1,8 @@
+# Finder in OS X
+.DS_Store
+
+# VS-Code History
+.history
+
+# Task installation in Github Actions 
+bin/task
