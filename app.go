@@ -14,6 +14,7 @@ import (
 )
 
 // AppsAPI is the interface that is satisfied by the Apps client when authenticated with a JWT.
+//
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o fakes/fake_apps_api.go . AppsAPI
 type AppsAPI interface {
 	ListInstallations(ctx context.Context, opt *github.ListOptions) ([]*github.Installation, *github.Response, error)
