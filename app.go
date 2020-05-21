@@ -57,22 +57,27 @@ type installation struct {
 	RepositoriesUpdatedAt time.Time
 }
 
-// repository ...
 type repository struct {
 	ID   int64
 	Name string
 }
 
+// Permissions is re-exported to prevent issues with conflicting go-github versions.
+type Permissions github.InstallationPermissions
+
+// Token is re-exported to prevent issues with conflicting go-github versions.
+type Token github.InstallationToken
+
 // CreateInstallationToken returns a new installation token for the given owner, scoped to the provided repositories and permissions.
-func (a *App) CreateInstallationToken(owner string, repos []string, permissions *github.InstallationPermissions) (*github.InstallationToken, error) {
+func (a *App) CreateInstallationToken(owner string, repositories []string, permissions *Permissions) (*Token, error) {
 	installationID, err := a.getInstallationID(owner)
 	if err != nil {
 		return nil, err
 	}
 	tokenOptions := &github.InstallationTokenOptions{
-		Permissions: permissions,
+		Permissions: (*github.InstallationPermissions)(permissions),
 	}
-	for _, repo := range repos {
+	for _, repo := range repositories {
 		id, err := a.getRepositoryID(owner, repo)
 		if err != nil {
 			return nil, err
@@ -83,7 +88,7 @@ func (a *App) CreateInstallationToken(owner string, repos []string, permissions 
 	if err != nil {
 		return nil, fmt.Errorf("failed to create token: %s", err)
 	}
-	return installationToken, nil
+	return (*Token)(installationToken), nil
 }
 
 // getInstallation gets the installation ID for the specified owner.
@@ -160,7 +165,7 @@ func (a *App) updateRepositories(owner string) error {
 		return nil
 	}
 
-	token, err := a.CreateInstallationToken(owner, nil, &github.InstallationPermissions{})
+	token, err := a.CreateInstallationToken(owner, nil, &Permissions{})
 	if err != nil {
 		return err
 	}
@@ -168,7 +173,7 @@ func (a *App) updateRepositories(owner string) error {
 	var (
 		repositories []*repository
 		listOptions  = &github.ListOptions{PerPage: 100}
-		client       = a.installsClientFactory(token.GetToken())
+		client       = a.installsClientFactory(*token.Token)
 	)
 
 	for {
@@ -204,4 +209,11 @@ type ErrInstallationNotFound string
 
 func (e ErrInstallationNotFound) Error() string {
 	return fmt.Sprintf("installation not found: '%s'", string(e))
+}
+
+func stringPointer(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
 }

@@ -46,12 +46,12 @@ func TestGithubApp(t *testing.T) {
 		Repositories: nil,
 	}, nil, nil)
 
-	token, err := gh.CreateInstallationToken("login", nil, &github.InstallationPermissions{})
+	token, err := gh.CreateInstallationToken("login", nil, &githubapp.Permissions{})
 	noError(t, err)
-	isEqual(t, "token", token.GetToken())
-	isEqual(t, expiresAt, token.GetExpiresAt())
+	isEqual(t, "token", *token.Token)
+	isEqual(t, expiresAt, *token.ExpiresAt)
 
-	_, err = gh.CreateInstallationToken("login", nil, &github.InstallationPermissions{})
+	_, err = gh.CreateInstallationToken("login", nil, &githubapp.Permissions{})
 	noError(t, err)
 	isEqual(t, 1, client.ListInstallationsCallCount())
 	isEqual(t, 2, client.CreateInstallationTokenCallCount())
