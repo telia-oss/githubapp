@@ -30,9 +30,9 @@ func TestGithubAppE2E(t *testing.T) {
 	client, err := githubapp.NewClient(integrationID, privateKey)
 	noError(t, err)
 
-	gh := githubapp.New(client)
+	app := githubapp.New(client)
 
-	token, err := gh.CreateInstallationToken(
+	token, err := app.CreateInstallationToken(
 		targetOwner,
 		[]string{targetRepository},
 		&github.InstallationPermissions{
