@@ -46,7 +46,9 @@ func TestGithubApp(t *testing.T) {
 		Repositories: nil,
 	}, nil, nil)
 
-	token, err := gh.CreateInstallationToken("login", nil, &githubapp.Permissions{})
+	token, err := gh.CreateInstallationToken("login", nil, &githubapp.Permissions{
+		Metadata: github.String("read"),
+	})
 	noError(t, err)
 	isEqual(t, "token", token.GetToken())
 	isEqual(t, expiresAt, token.GetExpiresAt())

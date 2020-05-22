@@ -58,9 +58,7 @@ type repository struct {
 }
 
 // Permissions is re-exported to prevent issues with conflicting go-github versions.
-type Permissions struct {
-	*github.InstallationPermissions
-}
+type Permissions github.InstallationPermissions
 
 // Token is re-exported to prevent issues with conflicting go-github versions.
 type Token struct {
@@ -74,7 +72,7 @@ func (a *App) CreateInstallationToken(owner string, repositories []string, permi
 		return nil, err
 	}
 	tokenOptions := &github.InstallationTokenOptions{
-		Permissions: permissions.InstallationPermissions,
+		Permissions: (*github.InstallationPermissions)(permissions),
 	}
 	for _, repo := range repositories {
 		id, err := a.getRepositoryID(owner, repo)
