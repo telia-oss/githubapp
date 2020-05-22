@@ -30,9 +30,9 @@ func main() {
     token, err := app.CreateInstallationToken(
         "telia-oss",
         []string{"githubapp"},
-        &github.InstallationPermissions{
+		&githubapp.Permissions{
             Metadata: github.String("read"),
-        }),
+        },
     )
     if err != nil {
         panic(err)

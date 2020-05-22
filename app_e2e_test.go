@@ -9,8 +9,6 @@ import (
 	"testing"
 
 	"github.com/telia-oss/githubapp"
-
-	"github.com/google/go-github/v29/github"
 )
 
 var (
@@ -30,14 +28,13 @@ func TestGithubAppE2E(t *testing.T) {
 	client, err := githubapp.NewClient(integrationID, privateKey)
 	noError(t, err)
 
-	gh := githubapp.New(client)
+	app := githubapp.New(client)
 
-	token, err := gh.CreateInstallationToken(
+	token, err := app.CreateInstallationToken(
 		targetOwner,
 		[]string{targetRepository},
-		&github.InstallationPermissions{
-			Metadata: github.String("read"),
-		})
+		&githubapp.Permissions{},
+	)
 	noError(t, err)
 
 	for _, r := range token.Repositories {
