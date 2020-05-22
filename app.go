@@ -58,10 +58,14 @@ type repository struct {
 }
 
 // Permissions is re-exported to prevent issues with conflicting go-github versions.
-type Permissions github.InstallationPermissions
+type Permissions struct {
+	*github.InstallationPermissions
+}
 
 // Token is re-exported to prevent issues with conflicting go-github versions.
-type Token github.InstallationToken
+type Token struct {
+	*github.InstallationToken
+}
 
 // CreateInstallationToken returns a new installation token for the given owner, scoped to the provided repositories and permissions.
 func (a *App) CreateInstallationToken(owner string, repositories []string, permissions *Permissions) (*Token, error) {
@@ -70,7 +74,7 @@ func (a *App) CreateInstallationToken(owner string, repositories []string, permi
 		return nil, err
 	}
 	tokenOptions := &github.InstallationTokenOptions{
-		Permissions: (*github.InstallationPermissions)(permissions),
+		Permissions: permissions.InstallationPermissions,
 	}
 	for _, repo := range repositories {
 		id, err := a.getRepositoryID(owner, repo)
@@ -83,7 +87,7 @@ func (a *App) CreateInstallationToken(owner string, repositories []string, permi
 	if err != nil {
 		return nil, fmt.Errorf("failed to create token: %s", err)
 	}
-	return (*Token)(installationToken), nil
+	return &Token{InstallationToken: installationToken}, nil
 }
 
 // getInstallation gets the installation ID for the specified owner.
