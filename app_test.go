@@ -27,17 +27,19 @@ func noError(t *testing.T, err error) {
 
 func TestGithubApp(t *testing.T) {
 	var (
-		client    = &fakes.FakeAppsJWTAPI{}
-		gh        = githubapp.New(client)
-		expiresAt = time.Now().Add(1 * time.Hour)
+		client        = &fakes.FakeAppsJWTAPI{}
+		tokenClient   = &fakes.FakeAppsTokenAPI{}
+		clientFactory = func(string) githubapp.AppsTokenAPI { return tokenClient }
+		gh            = githubapp.New(client, githubapp.WithInstallationClientFactory(clientFactory))
+		expiresAt     = time.Now().Add(1 * time.Hour)
 	)
 
 	client.ListInstallationsReturns([]*github.Installation{{
 		ID: github.Int64(23),
 		Account: &github.User{
-			Login: github.String("login"),
+			Login: github.String("owner"),
 		},
-	}}, &github.Response{NextPage: 0}, nil)
+	}}, &github.Response{}, nil)
 
 	client.CreateInstallationTokenReturns(&github.InstallationToken{
 		Token:        github.String("token"),
@@ -46,15 +48,24 @@ func TestGithubApp(t *testing.T) {
 		Repositories: nil,
 	}, nil, nil)
 
-	token, err := gh.CreateInstallationToken("login", nil, &githubapp.Permissions{
-		Metadata: github.String("read"),
-	})
+	tokenClient.ListReposReturns([]*github.Repository{{
+		ID:   github.Int64(23),
+		Name: github.String("repository"),
+	}}, &github.Response{}, nil)
+
+	token, err := gh.CreateInstallationToken(
+		"owner",
+		[]string{"repository"},
+		&githubapp.Permissions{
+			Metadata: github.String("read"),
+		})
 	noError(t, err)
 	isEqual(t, "token", token.GetToken())
 	isEqual(t, expiresAt, token.GetExpiresAt())
 
-	_, err = gh.CreateInstallationToken("login", nil, &githubapp.Permissions{})
+	_, err = gh.CreateInstallationToken("owner", nil, &githubapp.Permissions{})
 	noError(t, err)
 	isEqual(t, 1, client.ListInstallationsCallCount())
-	isEqual(t, 2, client.CreateInstallationTokenCallCount())
+	isEqual(t, 3, client.CreateInstallationTokenCallCount())
+	isEqual(t, 1, tokenClient.ListReposCallCount())
 }

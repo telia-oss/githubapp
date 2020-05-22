@@ -26,13 +26,33 @@ type AppsTokenAPI interface {
 }
 
 // New returns a new App.
-func New(client AppsJWTAPI) *App {
-	return &App{
+func New(client AppsJWTAPI, options ...option) *App {
+	a := &App{
 		client:         client,
 		updateInterval: 1 * time.Minute,
 		installsClientFactory: func(token string) AppsTokenAPI {
 			return NewInstallationClient(token).V3.Apps
 		},
+	}
+	for _, option := range options {
+		option(a)
+	}
+	return a
+}
+
+type option func(*App)
+
+// WithUpdateInterval can be used to override the default update interval for installations and repositories.
+func WithUpdateInterval(duration time.Duration) option {
+	return func(a *App) {
+		a.updateInterval = duration
+	}
+}
+
+// WithInstallationClientFactory sets the function used to create new installation clients internally, and can be used to inject test fakes.
+func WithInstallationClientFactory(f func(token string) AppsTokenAPI) option {
+	return func(a *App) {
+		a.installsClientFactory = f
 	}
 }
 
