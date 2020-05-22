@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/google/go-github/v29/github"
 	"github.com/telia-oss/githubapp"
 )
 
@@ -33,10 +34,14 @@ func TestGithubAppE2E(t *testing.T) {
 	token, err := app.CreateInstallationToken(
 		targetOwner,
 		[]string{targetRepository},
-		&githubapp.Permissions{},
+		&githubapp.Permissions{
+			Metadata: github.String("read"),
+		},
 	)
 	noError(t, err)
 
+	isEqual(t, "", token.Permissions.GetChecks())
+	isEqual(t, "read", token.Permissions.GetMetadata())
 	for _, r := range token.Repositories {
 		isEqual(t, targetRepository, r.GetName())
 	}
