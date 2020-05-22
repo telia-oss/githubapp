@@ -4,50 +4,44 @@ package githubapp
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
-	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v29/github"
-	"golang.org/x/oauth2"
 )
 
-// AppsAPI is the interface that is satisfied by the Apps client when authenticated with a JWT.
+// AppsJWTAPI is the interface that is satisfied by the Apps client when authenticated with a JWT.
 //
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o fakes/fake_apps_api.go . AppsAPI
-type AppsAPI interface {
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o fakes/fake_jwt_api.go . AppsJWTAPI
+type AppsJWTAPI interface {
 	ListInstallations(ctx context.Context, opt *github.ListOptions) ([]*github.Installation, *github.Response, error)
 	CreateInstallationToken(ctx context.Context, id int64, opt *github.InstallationTokenOptions) (*github.InstallationToken, *github.Response, error)
 }
 
-// NewClient returns a client for the Github V3 (REST) AppsAPI authenticated with a private key.
-func NewClient(integrationID int64, privateKey []byte) (AppsAPI, error) {
-	transport, err := ghinstallation.NewAppsTransport(http.DefaultTransport, integrationID, privateKey)
-	if err != nil {
-		return nil, err
-	}
-	client := github.NewClient(&http.Client{
-		Transport: transport,
-	})
-	return client.Apps, nil
+// AppsTokenAPI is the interface that is satisfied by the Apps client when authenticated with an installation token.
+//
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o fakes/fake_token_api.go . AppsTokenAPI
+type AppsTokenAPI interface {
+	ListRepos(ctx context.Context, opts *github.ListOptions) ([]*github.Repository, *github.Response, error)
 }
 
 // New returns a new App.
-func New(client AppsAPI) *App {
+func New(client AppsJWTAPI) *App {
 	return &App{
-		client:                client,
-		installsClientFactory: defaultInstallationsClientFactory,
-		updateInterval:        1 * time.Minute,
+		client:         client,
+		updateInterval: 1 * time.Minute,
+		installsClientFactory: func(token string) AppsTokenAPI {
+			return NewInstallationClient(token).V3.Apps
+		},
 	}
 }
 
 // App wraps the AppsAPI client and caches the installations and repositories for the installation.
 type App struct {
-	client                AppsAPI
+	client                AppsJWTAPI
 	installs              []*installation
 	installsUpdatedAt     time.Time
-	installsClientFactory func(string) *github.AppsService
+	installsClientFactory func(string) AppsTokenAPI
 	updateInterval        time.Duration
 }
 
@@ -196,13 +190,6 @@ func (a *App) updateRepositories(owner string) error {
 
 	i.Repositories, i.RepositoriesUpdatedAt = repositories, time.Now()
 	return nil
-}
-
-func defaultInstallationsClientFactory(token string) *github.AppsService {
-	oauth := oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: token},
-	))
-	return github.NewClient(oauth).Apps
 }
 
 // ErrInstallationNotFound is returned if the requested App installation is not found.

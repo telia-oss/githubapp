@@ -27,7 +27,7 @@ func noError(t *testing.T, err error) {
 
 func TestGithubApp(t *testing.T) {
 	var (
-		client    = &fakes.FakeAppsAPI{}
+		client    = &fakes.FakeAppsJWTAPI{}
 		gh        = githubapp.New(client)
 		expiresAt = time.Now().Add(1 * time.Hour)
 	)

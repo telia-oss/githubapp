@@ -9,7 +9,7 @@ import (
 	"github.com/telia-oss/githubapp"
 )
 
-type FakeAppsAPI struct {
+type FakeAppsJWTAPI struct {
 	CreateInstallationTokenStub        func(context.Context, int64, *github.InstallationTokenOptions) (*github.InstallationToken, *github.Response, error)
 	createInstallationTokenMutex       sync.RWMutex
 	createInstallationTokenArgsForCall []struct {
@@ -47,7 +47,7 @@ type FakeAppsAPI struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeAppsAPI) CreateInstallationToken(arg1 context.Context, arg2 int64, arg3 *github.InstallationTokenOptions) (*github.InstallationToken, *github.Response, error) {
+func (fake *FakeAppsJWTAPI) CreateInstallationToken(arg1 context.Context, arg2 int64, arg3 *github.InstallationTokenOptions) (*github.InstallationToken, *github.Response, error) {
 	fake.createInstallationTokenMutex.Lock()
 	ret, specificReturn := fake.createInstallationTokenReturnsOnCall[len(fake.createInstallationTokenArgsForCall)]
 	fake.createInstallationTokenArgsForCall = append(fake.createInstallationTokenArgsForCall, struct {
@@ -67,26 +67,26 @@ func (fake *FakeAppsAPI) CreateInstallationToken(arg1 context.Context, arg2 int6
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeAppsAPI) CreateInstallationTokenCallCount() int {
+func (fake *FakeAppsJWTAPI) CreateInstallationTokenCallCount() int {
 	fake.createInstallationTokenMutex.RLock()
 	defer fake.createInstallationTokenMutex.RUnlock()
 	return len(fake.createInstallationTokenArgsForCall)
 }
 
-func (fake *FakeAppsAPI) CreateInstallationTokenCalls(stub func(context.Context, int64, *github.InstallationTokenOptions) (*github.InstallationToken, *github.Response, error)) {
+func (fake *FakeAppsJWTAPI) CreateInstallationTokenCalls(stub func(context.Context, int64, *github.InstallationTokenOptions) (*github.InstallationToken, *github.Response, error)) {
 	fake.createInstallationTokenMutex.Lock()
 	defer fake.createInstallationTokenMutex.Unlock()
 	fake.CreateInstallationTokenStub = stub
 }
 
-func (fake *FakeAppsAPI) CreateInstallationTokenArgsForCall(i int) (context.Context, int64, *github.InstallationTokenOptions) {
+func (fake *FakeAppsJWTAPI) CreateInstallationTokenArgsForCall(i int) (context.Context, int64, *github.InstallationTokenOptions) {
 	fake.createInstallationTokenMutex.RLock()
 	defer fake.createInstallationTokenMutex.RUnlock()
 	argsForCall := fake.createInstallationTokenArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeAppsAPI) CreateInstallationTokenReturns(result1 *github.InstallationToken, result2 *github.Response, result3 error) {
+func (fake *FakeAppsJWTAPI) CreateInstallationTokenReturns(result1 *github.InstallationToken, result2 *github.Response, result3 error) {
 	fake.createInstallationTokenMutex.Lock()
 	defer fake.createInstallationTokenMutex.Unlock()
 	fake.CreateInstallationTokenStub = nil
@@ -97,7 +97,7 @@ func (fake *FakeAppsAPI) CreateInstallationTokenReturns(result1 *github.Installa
 	}{result1, result2, result3}
 }
 
-func (fake *FakeAppsAPI) CreateInstallationTokenReturnsOnCall(i int, result1 *github.InstallationToken, result2 *github.Response, result3 error) {
+func (fake *FakeAppsJWTAPI) CreateInstallationTokenReturnsOnCall(i int, result1 *github.InstallationToken, result2 *github.Response, result3 error) {
 	fake.createInstallationTokenMutex.Lock()
 	defer fake.createInstallationTokenMutex.Unlock()
 	fake.CreateInstallationTokenStub = nil
@@ -115,7 +115,7 @@ func (fake *FakeAppsAPI) CreateInstallationTokenReturnsOnCall(i int, result1 *gi
 	}{result1, result2, result3}
 }
 
-func (fake *FakeAppsAPI) ListInstallations(arg1 context.Context, arg2 *github.ListOptions) ([]*github.Installation, *github.Response, error) {
+func (fake *FakeAppsJWTAPI) ListInstallations(arg1 context.Context, arg2 *github.ListOptions) ([]*github.Installation, *github.Response, error) {
 	fake.listInstallationsMutex.Lock()
 	ret, specificReturn := fake.listInstallationsReturnsOnCall[len(fake.listInstallationsArgsForCall)]
 	fake.listInstallationsArgsForCall = append(fake.listInstallationsArgsForCall, struct {
@@ -134,26 +134,26 @@ func (fake *FakeAppsAPI) ListInstallations(arg1 context.Context, arg2 *github.Li
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
-func (fake *FakeAppsAPI) ListInstallationsCallCount() int {
+func (fake *FakeAppsJWTAPI) ListInstallationsCallCount() int {
 	fake.listInstallationsMutex.RLock()
 	defer fake.listInstallationsMutex.RUnlock()
 	return len(fake.listInstallationsArgsForCall)
 }
 
-func (fake *FakeAppsAPI) ListInstallationsCalls(stub func(context.Context, *github.ListOptions) ([]*github.Installation, *github.Response, error)) {
+func (fake *FakeAppsJWTAPI) ListInstallationsCalls(stub func(context.Context, *github.ListOptions) ([]*github.Installation, *github.Response, error)) {
 	fake.listInstallationsMutex.Lock()
 	defer fake.listInstallationsMutex.Unlock()
 	fake.ListInstallationsStub = stub
 }
 
-func (fake *FakeAppsAPI) ListInstallationsArgsForCall(i int) (context.Context, *github.ListOptions) {
+func (fake *FakeAppsJWTAPI) ListInstallationsArgsForCall(i int) (context.Context, *github.ListOptions) {
 	fake.listInstallationsMutex.RLock()
 	defer fake.listInstallationsMutex.RUnlock()
 	argsForCall := fake.listInstallationsArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeAppsAPI) ListInstallationsReturns(result1 []*github.Installation, result2 *github.Response, result3 error) {
+func (fake *FakeAppsJWTAPI) ListInstallationsReturns(result1 []*github.Installation, result2 *github.Response, result3 error) {
 	fake.listInstallationsMutex.Lock()
 	defer fake.listInstallationsMutex.Unlock()
 	fake.ListInstallationsStub = nil
@@ -164,7 +164,7 @@ func (fake *FakeAppsAPI) ListInstallationsReturns(result1 []*github.Installation
 	}{result1, result2, result3}
 }
 
-func (fake *FakeAppsAPI) ListInstallationsReturnsOnCall(i int, result1 []*github.Installation, result2 *github.Response, result3 error) {
+func (fake *FakeAppsJWTAPI) ListInstallationsReturnsOnCall(i int, result1 []*github.Installation, result2 *github.Response, result3 error) {
 	fake.listInstallationsMutex.Lock()
 	defer fake.listInstallationsMutex.Unlock()
 	fake.ListInstallationsStub = nil
@@ -182,7 +182,7 @@ func (fake *FakeAppsAPI) ListInstallationsReturnsOnCall(i int, result1 []*github
 	}{result1, result2, result3}
 }
 
-func (fake *FakeAppsAPI) Invocations() map[string][][]interface{} {
+func (fake *FakeAppsJWTAPI) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.createInstallationTokenMutex.RLock()
@@ -196,7 +196,7 @@ func (fake *FakeAppsAPI) Invocations() map[string][][]interface{} {
 	return copiedInvocations
 }
 
-func (fake *FakeAppsAPI) recordInvocation(key string, args []interface{}) {
+func (fake *FakeAppsJWTAPI) recordInvocation(key string, args []interface{}) {
 	fake.invocationsMutex.Lock()
 	defer fake.invocationsMutex.Unlock()
 	if fake.invocations == nil {
@@ -208,4 +208,4 @@ func (fake *FakeAppsAPI) recordInvocation(key string, args []interface{}) {
 	fake.invocations[key] = append(fake.invocations[key], args)
 }
 
-var _ githubapp.AppsAPI = new(FakeAppsAPI)
+var _ githubapp.AppsJWTAPI = new(FakeAppsJWTAPI)
