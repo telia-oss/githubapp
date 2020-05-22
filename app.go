@@ -85,7 +85,7 @@ func (a *App) CreateInstallationToken(owner string, repositories []string, permi
 	}
 	installationToken, _, err := a.client.CreateInstallationToken(context.TODO(), installationID, tokenOptions)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create token: %s", err)
+		return nil, err
 	}
 	return &Token{InstallationToken: installationToken}, nil
 }
