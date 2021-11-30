@@ -5,24 +5,24 @@ import (
 	"context"
 	"sync"
 
-	"github.com/google/go-github/v29/github"
+	"github.com/google/go-github/v41/github"
 	"github.com/telia-oss/githubapp"
 )
 
 type FakeAppsTokenAPI struct {
-	ListReposStub        func(context.Context, *github.ListOptions) ([]*github.Repository, *github.Response, error)
+	ListReposStub        func(context.Context, *github.ListOptions) (*github.ListRepositories, *github.Response, error)
 	listReposMutex       sync.RWMutex
 	listReposArgsForCall []struct {
 		arg1 context.Context
 		arg2 *github.ListOptions
 	}
 	listReposReturns struct {
-		result1 []*github.Repository
+		result1 *github.ListRepositories
 		result2 *github.Response
 		result3 error
 	}
 	listReposReturnsOnCall map[int]struct {
-		result1 []*github.Repository
+		result1 *github.ListRepositories
 		result2 *github.Response
 		result3 error
 	}
@@ -30,22 +30,23 @@ type FakeAppsTokenAPI struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeAppsTokenAPI) ListRepos(arg1 context.Context, arg2 *github.ListOptions) ([]*github.Repository, *github.Response, error) {
+func (fake *FakeAppsTokenAPI) ListRepos(arg1 context.Context, arg2 *github.ListOptions) (*github.ListRepositories, *github.Response, error) {
 	fake.listReposMutex.Lock()
 	ret, specificReturn := fake.listReposReturnsOnCall[len(fake.listReposArgsForCall)]
 	fake.listReposArgsForCall = append(fake.listReposArgsForCall, struct {
 		arg1 context.Context
 		arg2 *github.ListOptions
 	}{arg1, arg2})
+	stub := fake.ListReposStub
+	fakeReturns := fake.listReposReturns
 	fake.recordInvocation("ListRepos", []interface{}{arg1, arg2})
 	fake.listReposMutex.Unlock()
-	if fake.ListReposStub != nil {
-		return fake.ListReposStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.listReposReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -55,7 +56,7 @@ func (fake *FakeAppsTokenAPI) ListReposCallCount() int {
 	return len(fake.listReposArgsForCall)
 }
 
-func (fake *FakeAppsTokenAPI) ListReposCalls(stub func(context.Context, *github.ListOptions) ([]*github.Repository, *github.Response, error)) {
+func (fake *FakeAppsTokenAPI) ListReposCalls(stub func(context.Context, *github.ListOptions) (*github.ListRepositories, *github.Response, error)) {
 	fake.listReposMutex.Lock()
 	defer fake.listReposMutex.Unlock()
 	fake.ListReposStub = stub
@@ -68,30 +69,30 @@ func (fake *FakeAppsTokenAPI) ListReposArgsForCall(i int) (context.Context, *git
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeAppsTokenAPI) ListReposReturns(result1 []*github.Repository, result2 *github.Response, result3 error) {
+func (fake *FakeAppsTokenAPI) ListReposReturns(result1 *github.ListRepositories, result2 *github.Response, result3 error) {
 	fake.listReposMutex.Lock()
 	defer fake.listReposMutex.Unlock()
 	fake.ListReposStub = nil
 	fake.listReposReturns = struct {
-		result1 []*github.Repository
+		result1 *github.ListRepositories
 		result2 *github.Response
 		result3 error
 	}{result1, result2, result3}
 }
 
-func (fake *FakeAppsTokenAPI) ListReposReturnsOnCall(i int, result1 []*github.Repository, result2 *github.Response, result3 error) {
+func (fake *FakeAppsTokenAPI) ListReposReturnsOnCall(i int, result1 *github.ListRepositories, result2 *github.Response, result3 error) {
 	fake.listReposMutex.Lock()
 	defer fake.listReposMutex.Unlock()
 	fake.ListReposStub = nil
 	if fake.listReposReturnsOnCall == nil {
 		fake.listReposReturnsOnCall = make(map[int]struct {
-			result1 []*github.Repository
+			result1 *github.ListRepositories
 			result2 *github.Response
 			result3 error
 		})
 	}
 	fake.listReposReturnsOnCall[i] = struct {
-		result1 []*github.Repository
+		result1 *github.ListRepositories
 		result2 *github.Response
 		result3 error
 	}{result1, result2, result3}

@@ -1,3 +1,4 @@
+//go:build e2e
 // +build e2e
 
 package githubapp_test
@@ -8,7 +9,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/google/go-github/v29/github"
+	"github.com/google/go-github/v41/github"
 	"github.com/telia-oss/githubapp"
 )
 

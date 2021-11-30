@@ -16,7 +16,7 @@ package main
 import (
 	"github.com/telia-oss/githubapp"
 
-	"github.com/google/go-github/v29/github"
+	"github.com/google/go-github/v41/github"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
     }
 
     app := githubapp.New(client)
-    
+
     token, err := app.CreateInstallationToken(
         "telia-oss",
         []string{"githubapp"},

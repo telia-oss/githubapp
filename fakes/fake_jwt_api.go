@@ -5,7 +5,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/google/go-github/v29/github"
+	"github.com/google/go-github/v41/github"
 	"github.com/telia-oss/githubapp"
 )
 
@@ -55,15 +55,16 @@ func (fake *FakeAppsJWTAPI) CreateInstallationToken(arg1 context.Context, arg2 i
 		arg2 int64
 		arg3 *github.InstallationTokenOptions
 	}{arg1, arg2, arg3})
+	stub := fake.CreateInstallationTokenStub
+	fakeReturns := fake.createInstallationTokenReturns
 	fake.recordInvocation("CreateInstallationToken", []interface{}{arg1, arg2, arg3})
 	fake.createInstallationTokenMutex.Unlock()
-	if fake.CreateInstallationTokenStub != nil {
-		return fake.CreateInstallationTokenStub(arg1, arg2, arg3)
+	if stub != nil {
+		return stub(arg1, arg2, arg3)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.createInstallationTokenReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
@@ -122,15 +123,16 @@ func (fake *FakeAppsJWTAPI) ListInstallations(arg1 context.Context, arg2 *github
 		arg1 context.Context
 		arg2 *github.ListOptions
 	}{arg1, arg2})
+	stub := fake.ListInstallationsStub
+	fakeReturns := fake.listInstallationsReturns
 	fake.recordInvocation("ListInstallations", []interface{}{arg1, arg2})
 	fake.listInstallationsMutex.Unlock()
-	if fake.ListInstallationsStub != nil {
-		return fake.ListInstallationsStub(arg1, arg2)
+	if stub != nil {
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2, ret.result3
 	}
-	fakeReturns := fake.listInstallationsReturns
 	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
 }
 
