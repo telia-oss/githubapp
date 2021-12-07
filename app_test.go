@@ -8,7 +8,7 @@ import (
 	"github.com/telia-oss/githubapp"
 	"github.com/telia-oss/githubapp/fakes"
 
-	"github.com/google/go-github/v29/github"
+	"github.com/google/go-github/v41/github"
 )
 
 func isEqual(t *testing.T, expected, got interface{}) {
@@ -48,10 +48,13 @@ func TestGithubApp(t *testing.T) {
 		Repositories: nil,
 	}, nil, nil)
 
-	tokenClient.ListReposReturns([]*github.Repository{{
-		ID:   github.Int64(23),
-		Name: github.String("repository"),
-	}}, &github.Response{}, nil)
+	tokenClient.ListReposReturns(&github.ListRepositories{
+		TotalCount: github.Int(1),
+		Repositories: []*github.Repository{{
+			ID:   github.Int64(23),
+			Name: github.String("repository"),
+		}},
+	}, &github.Response{}, nil)
 
 	token, err := gh.CreateInstallationToken(
 		"owner",

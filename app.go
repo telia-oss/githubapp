@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v29/github"
+	"github.com/google/go-github/v41/github"
 )
 
 // AppsJWTAPI is the interface that is satisfied by the Apps client when authenticated with a JWT.
@@ -22,7 +22,7 @@ type AppsJWTAPI interface {
 //
 //go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o fakes/fake_token_api.go . AppsTokenAPI
 type AppsTokenAPI interface {
-	ListRepos(ctx context.Context, opts *github.ListOptions) ([]*github.Repository, *github.Response, error)
+	ListRepos(ctx context.Context, opts *github.ListOptions) (*github.ListRepositories, *github.Response, error)
 }
 
 // New returns a new App.
@@ -198,7 +198,7 @@ func (a *App) updateRepositories(owner string) error {
 		if err != nil {
 			return err
 		}
-		for _, r := range list {
+		for _, r := range list.Repositories {
 			repositories = append(repositories, &repository{
 				ID:   r.GetID(),
 				Name: r.GetName(),
