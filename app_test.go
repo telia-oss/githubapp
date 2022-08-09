@@ -8,7 +8,7 @@ import (
 	"github.com/telia-oss/githubapp"
 	"github.com/telia-oss/githubapp/fakes"
 
-	"github.com/google/go-github/v41/github"
+	"github.com/google/go-github/v45/github"
 )
 
 func isEqual(t *testing.T, expected, got interface{}) {
@@ -34,34 +34,45 @@ func TestGithubApp(t *testing.T) {
 		expiresAt     = time.Now().Add(1 * time.Hour)
 	)
 
-	client.ListInstallationsReturns([]*github.Installation{{
-		ID: github.Int64(23),
-		Account: &github.User{
-			Login: github.String("owner"),
-		},
-	}}, &github.Response{}, nil)
+	client.ListInstallationsReturns(
+		[]*github.Installation{
+			{
+				ID: github.Int64(23),
+				Account: &github.User{
+					Login: github.String("owner"),
+				},
+			},
+		}, &github.Response{}, nil,
+	)
 
-	client.CreateInstallationTokenReturns(&github.InstallationToken{
-		Token:        github.String("token"),
-		ExpiresAt:    &expiresAt,
-		Permissions:  nil,
-		Repositories: nil,
-	}, nil, nil)
+	client.CreateInstallationTokenReturns(
+		&github.InstallationToken{
+			Token:        github.String("token"),
+			ExpiresAt:    &expiresAt,
+			Permissions:  nil,
+			Repositories: nil,
+		}, nil, nil,
+	)
 
-	tokenClient.ListReposReturns(&github.ListRepositories{
-		TotalCount: github.Int(1),
-		Repositories: []*github.Repository{{
-			ID:   github.Int64(23),
-			Name: github.String("repository"),
-		}},
-	}, &github.Response{}, nil)
+	tokenClient.ListReposReturns(
+		&github.ListRepositories{
+			TotalCount: github.Int(1),
+			Repositories: []*github.Repository{
+				{
+					ID:   github.Int64(23),
+					Name: github.String("repository"),
+				},
+			},
+		}, &github.Response{}, nil,
+	)
 
 	token, err := gh.CreateInstallationToken(
 		"owner",
 		[]string{"repository"},
 		&githubapp.Permissions{
 			Metadata: github.String("read"),
-		})
+		},
+	)
 	noError(t, err)
 	isEqual(t, "token", token.GetToken())
 	isEqual(t, expiresAt, token.GetExpiresAt())

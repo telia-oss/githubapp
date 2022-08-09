@@ -6,3 +6,5 @@
 
 # Task installation in Github Actions 
 bin/task
+
+.idea
