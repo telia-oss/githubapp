@@ -16,7 +16,7 @@ package main
 import (
 	"github.com/telia-oss/githubapp"
 
-	"github.com/google/go-github/v41/github"
+	"github.com/google/go-github/v45/github"
 )
 
 func main() {

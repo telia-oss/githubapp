@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v41/github"
+	"github.com/google/go-github/v45/github"
 )
 
 // AppsJWTAPI is the interface that is satisfied by the Apps client when authenticated with a JWT.
