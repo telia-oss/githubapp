@@ -25,14 +25,22 @@ type AppsTokenAPI interface {
 	ListRepos(ctx context.Context, opts *github.ListOptions) (*github.ListRepositories, *github.Response, error)
 }
 
+// GithubAPI is the interface that is statisfied RateLimit client
+//
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -o fakes/fake_github_api.go . GithubAPI
+type GithubAPI interface {
+	RateLimits(ctx context.Context) (*github.RateLimits, *github.Response, error)
+}
+
 // New returns a new App.
-func New(client AppsJWTAPI, options ...option) *App {
+func New(client AppsJWTAPI, ghClient GithubAPI, options ...option) *App {
 	a := &App{
 		client:         client,
 		updateInterval: 1 * time.Minute,
 		installsClientFactory: func(token string) AppsTokenAPI {
 			return NewInstallationClient(token).V3.Apps
 		},
+		githubClient: ghClient,
 	}
 	for _, option := range options {
 		option(a)
@@ -62,6 +70,7 @@ type App struct {
 	installs              []*installation
 	installsUpdatedAt     time.Time
 	installsClientFactory func(string) AppsTokenAPI
+	githubClient          GithubAPI
 	updateInterval        time.Duration
 }
 
@@ -83,6 +92,11 @@ type Permissions github.InstallationPermissions
 // Token is re-exported to prevent issues with conflicting go-github versions.
 type Token struct {
 	*github.InstallationToken
+}
+
+// RateLimits returns the rate limits for the githubClient.
+func (a *App) RateLimits() (*github.RateLimits, *github.Response, error) {
+	return a.githubClient.RateLimits(context.TODO())
 }
 
 // CreateInstallationToken returns a new installation token for the given owner, scoped to the provided repositories and permissions.

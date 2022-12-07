@@ -35,3 +35,14 @@ type InstallationClient struct {
 	V3 *github.Client
 	V4 *githubv4.Client
 }
+
+func NewRateLimitClient(integrationID int64, privateKey []byte) (GithubAPI, error) {
+	transport, err := ghinstallation.NewAppsTransport(http.DefaultTransport, integrationID, privateKey)
+	if err != nil {
+		return nil, err
+	}
+	client := github.NewClient(&http.Client{
+		Transport: transport,
+	})
+	return client, nil
+}
