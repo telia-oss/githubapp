@@ -29,9 +29,8 @@ func TestGithubApp(t *testing.T) {
 	var (
 		client        = &fakes.FakeAppsJWTAPI{}
 		tokenClient   = &fakes.FakeAppsTokenAPI{}
-		githubClient  = &fakes.FakeGithubAPI{}
 		clientFactory = func(string) githubapp.AppsTokenAPI { return tokenClient }
-		gh            = githubapp.New(client, githubClient, githubapp.WithInstallationClientFactory(clientFactory))
+		gh            = githubapp.New(client, githubapp.WithInstallationClientFactory(clientFactory))
 		expiresAt     = time.Now().Add(1 * time.Hour)
 	)
 
@@ -67,7 +66,7 @@ func TestGithubApp(t *testing.T) {
 		}, &github.Response{}, nil,
 	)
 
-	githubClient.RateLimitsReturns(
+	client.RateLimitsReturns(
 		&github.RateLimits{
 			Core: &github.Rate{
 				Limit:     1,
@@ -98,5 +97,5 @@ func TestGithubApp(t *testing.T) {
 	noError(t, err)
 	isEqual(t, 1, rateLimits.Core.Limit)
 	isEqual(t, 1, rateLimits.Core.Remaining)
-	isEqual(t, 1, githubClient.RateLimitsCallCount())
+	isEqual(t, 1, client.RateLimitsCallCount())
 }

@@ -43,6 +43,21 @@ type FakeAppsJWTAPI struct {
 		result2 *github.Response
 		result3 error
 	}
+	RateLimitsStub        func(context.Context) (*github.RateLimits, *github.Response, error)
+	rateLimitsMutex       sync.RWMutex
+	rateLimitsArgsForCall []struct {
+		arg1 context.Context
+	}
+	rateLimitsReturns struct {
+		result1 *github.RateLimits
+		result2 *github.Response
+		result3 error
+	}
+	rateLimitsReturnsOnCall map[int]struct {
+		result1 *github.RateLimits
+		result2 *github.Response
+		result3 error
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -184,6 +199,73 @@ func (fake *FakeAppsJWTAPI) ListInstallationsReturnsOnCall(i int, result1 []*git
 	}{result1, result2, result3}
 }
 
+func (fake *FakeAppsJWTAPI) RateLimits(arg1 context.Context) (*github.RateLimits, *github.Response, error) {
+	fake.rateLimitsMutex.Lock()
+	ret, specificReturn := fake.rateLimitsReturnsOnCall[len(fake.rateLimitsArgsForCall)]
+	fake.rateLimitsArgsForCall = append(fake.rateLimitsArgsForCall, struct {
+		arg1 context.Context
+	}{arg1})
+	stub := fake.RateLimitsStub
+	fakeReturns := fake.rateLimitsReturns
+	fake.recordInvocation("RateLimits", []interface{}{arg1})
+	fake.rateLimitsMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2, ret.result3
+	}
+	return fakeReturns.result1, fakeReturns.result2, fakeReturns.result3
+}
+
+func (fake *FakeAppsJWTAPI) RateLimitsCallCount() int {
+	fake.rateLimitsMutex.RLock()
+	defer fake.rateLimitsMutex.RUnlock()
+	return len(fake.rateLimitsArgsForCall)
+}
+
+func (fake *FakeAppsJWTAPI) RateLimitsCalls(stub func(context.Context) (*github.RateLimits, *github.Response, error)) {
+	fake.rateLimitsMutex.Lock()
+	defer fake.rateLimitsMutex.Unlock()
+	fake.RateLimitsStub = stub
+}
+
+func (fake *FakeAppsJWTAPI) RateLimitsArgsForCall(i int) context.Context {
+	fake.rateLimitsMutex.RLock()
+	defer fake.rateLimitsMutex.RUnlock()
+	argsForCall := fake.rateLimitsArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeAppsJWTAPI) RateLimitsReturns(result1 *github.RateLimits, result2 *github.Response, result3 error) {
+	fake.rateLimitsMutex.Lock()
+	defer fake.rateLimitsMutex.Unlock()
+	fake.RateLimitsStub = nil
+	fake.rateLimitsReturns = struct {
+		result1 *github.RateLimits
+		result2 *github.Response
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeAppsJWTAPI) RateLimitsReturnsOnCall(i int, result1 *github.RateLimits, result2 *github.Response, result3 error) {
+	fake.rateLimitsMutex.Lock()
+	defer fake.rateLimitsMutex.Unlock()
+	fake.RateLimitsStub = nil
+	if fake.rateLimitsReturnsOnCall == nil {
+		fake.rateLimitsReturnsOnCall = make(map[int]struct {
+			result1 *github.RateLimits
+			result2 *github.Response
+			result3 error
+		})
+	}
+	fake.rateLimitsReturnsOnCall[i] = struct {
+		result1 *github.RateLimits
+		result2 *github.Response
+		result3 error
+	}{result1, result2, result3}
+}
+
 func (fake *FakeAppsJWTAPI) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -191,6 +273,8 @@ func (fake *FakeAppsJWTAPI) Invocations() map[string][][]interface{} {
 	defer fake.createInstallationTokenMutex.RUnlock()
 	fake.listInstallationsMutex.RLock()
 	defer fake.listInstallationsMutex.RUnlock()
+	fake.rateLimitsMutex.RLock()
+	defer fake.rateLimitsMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

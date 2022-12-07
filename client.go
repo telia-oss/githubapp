@@ -19,7 +19,13 @@ func NewClient(integrationID int64, privateKey []byte) (AppsJWTAPI, error) {
 	client := github.NewClient(&http.Client{
 		Transport: transport,
 	})
-	return client.Apps, nil
+	return &struct { 
+		*github.Client
+		*github.AppsService
+	}{
+		client,
+		client.Apps,
+	}, nil
 }
 
 // NewInstallationClient returns a new client.
@@ -34,15 +40,4 @@ func NewInstallationClient(token string) *InstallationClient {
 type InstallationClient struct {
 	V3 *github.Client
 	V4 *githubv4.Client
-}
-
-func NewRateLimitClient(integrationID int64, privateKey []byte) (GithubAPI, error) {
-	transport, err := ghinstallation.NewAppsTransport(http.DefaultTransport, integrationID, privateKey)
-	if err != nil {
-		return nil, err
-	}
-	client := github.NewClient(&http.Client{
-		Transport: transport,
-	})
-	return client, nil
 }
