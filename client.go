@@ -19,7 +19,7 @@ func NewClient(integrationID int64, privateKey []byte) (AppsJWTAPI, error) {
 	client := github.NewClient(&http.Client{
 		Transport: transport,
 	})
-	return &struct { 
+	return &struct {
 		*github.Client
 		*github.AppsService
 	}{
