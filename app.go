@@ -16,6 +16,7 @@ import (
 type AppsJWTAPI interface {
 	ListInstallations(ctx context.Context, opt *github.ListOptions) ([]*github.Installation, *github.Response, error)
 	CreateInstallationToken(ctx context.Context, id int64, opt *github.InstallationTokenOptions) (*github.InstallationToken, *github.Response, error)
+	RateLimits(ctx context.Context) (*github.RateLimits, *github.Response, error)
 }
 
 // AppsTokenAPI is the interface that is satisfied by the Apps client when authenticated with an installation token.
@@ -83,6 +84,11 @@ type Permissions github.InstallationPermissions
 // Token is re-exported to prevent issues with conflicting go-github versions.
 type Token struct {
 	*github.InstallationToken
+}
+
+// RateLimits returns the rate limits for the githubClient.
+func (a *App) RateLimits() (*github.RateLimits, *github.Response, error) {
+	return a.client.RateLimits(context.TODO())
 }
 
 // CreateInstallationToken returns a new installation token for the given owner, scoped to the provided repositories and permissions.
